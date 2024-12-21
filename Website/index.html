@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zahlensystem-Umrechner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Zahlensystem-Umrechner</h1>
+  <form id="converter-form">
+    <input type="text" id="input-number" placeholder="Zahl eingeben" required>
+    <select id="source-base">
+      <option value="10">Dezimal</option>
+      <option value="2">Binär</option>
+      <option value="16">Hexadezimal</option>
+      <option value="8">Oktal</option>
+      <option value="roman">Römische Zahlen</option>
+    </select>
+    zu
+    <select id="target-base">
+      <option value="10">Dezimal</option>
+      <option value="2">Binär</option>
+      <option value="16">Hexadezimal</option>
+      <option value="8">Oktal</option>
+      <option value="roman">Römische Zahlen</option>
+    </select>
+    <br>
+    <button type="button" onclick="convert()">Umrechnen</button>
+  </form>
+  <h2>Ergebnis: <span id="result"></span></h2>
+  <script src="script.js"></script>
+</body>
+</html>
