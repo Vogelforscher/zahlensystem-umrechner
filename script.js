@@ -6,6 +6,16 @@ function convert() {
   let result = "";
 
   try {
+    // Überprüfen auf ungültige Kombinationen
+    if (
+      (sourceBase === "ascii" && targetBase !== "utf8" && targetBase !== "utf32") ||
+      (targetBase === "ascii" && sourceBase !== "10") ||
+      (sourceBase === "roman" && (targetBase === "ascii" || targetBase === "utf8" || targetBase === "utf32")) ||
+      (targetBase === "roman" && (sourceBase === "ascii" || sourceBase === "utf8" || sourceBase === "utf32"))
+    ) {
+      throw new Error("Ungültige Umrechnung zwischen den ausgewählten Zahlensystemen.");
+    }
+
     if (sourceBase === "roman") {
       // Römische Zahl zu Dezimal
       const decimal = romanToDecimal(inputNumber);
@@ -17,6 +27,9 @@ function convert() {
     } else if (targetBase === "ascii") {
       // Dezimal zu ASCII
       const decimal = parseInt(inputNumber, sourceBase);
+      if (isNaN(decimal) || decimal < 0 || decimal > 255) {
+        throw new Error("ASCII-Werte müssen im Bereich von 0 bis 255 liegen.");
+      }
       result = String.fromCharCode(decimal);
     } else if (targetBase === "utf8") {
       // Text zu UTF-8
@@ -30,7 +43,7 @@ function convert() {
       result = decimal.toString(targetBase);
     }
   } catch (error) {
-    result = "Ungültige Eingabe";
+    result = error.message;
   }
 
   document.getElementById("result").innerText = result;
@@ -39,109 +52,74 @@ function convert() {
 function romanToDecimal(roman) {
   const romanNumerals = {
     M: 1000,
-    CM: 900,
     D: 500,
-    CD: 400,
     C: 100,
-    XC: 90,
     L: 50,
-    XL: 40,
     X: 10,
-    IX: 9,
     V: 5,
-    IV: 4,
     I: 1,
   };
 
   let decimal = 0;
-  let i = 0;
+  let prevValue = 0;
 
-  while (i < roman.length) {
-    const twoChar = roman.substr(i, 2);
-    if (romanNumerals[twoChar]) {
-      decimal += romanNumerals[twoChar];
-      i += 2;
+  for (let char of roman.toUpperCase()) {
+    const value = romanNumerals[char];
+    if (!value) throw new Error("Ungültige römische Zahl.");
+    if (value > prevValue) {
+      decimal += value - 2 * prevValue;
     } else {
-      decimal += romanNumerals[roman[i]];
-      i++;
+      decimal += value;
     }
+    prevValue = value;
   }
 
   return decimal;
 }
 
-function decimalToRoman(num) {
-  const romanNumerals = [
-    ["M", 1000],
-    ["CM", 900],
-    ["D", 500],
-    ["CD", 400],
-    ["C", 100],
-    ["XC", 90],
-    ["L", 50],
-    ["XL", 40],
-    ["X", 10],
-    ["IX", 9],
-    ["V", 5],
-    ["IV", 4],
-    ["I", 1],
-  ];
-  let roman = "";
+function decimalToRoman(decimal) {
+  if (decimal <= 0 || decimal > 3999) {
+    throw new Error("Römische Zahlen können nur Werte zwischen 1 und 3999 darstellen.");
+  }
 
-  for (const [letter, value] of romanNumerals) {
-    while (num >= value) {
-      roman += letter;
-      num -= value;
+  const romanNumerals = [
+    { value: 1000, symbol: "M" },
+    { value: 900, symbol: "CM" },
+    { value: 500, symbol: "D" },
+    { value: 400, symbol: "CD" },
+    { value: 100, symbol: "C" },
+    { value: 90, symbol: "XC" },
+    { value: 50, symbol: "L" },
+    { value: 40, symbol: "XL" },
+    { value: 10, symbol: "X" },
+    { value: 9, symbol: "IX" },
+    { value: 5, symbol: "V" },
+    { value: 4, symbol: "IV" },
+    { value: 1, symbol: "I" },
+  ];
+
+  let result = "";
+
+  for (const { value, symbol } of romanNumerals) {
+    while (decimal >= value) {
+      result += symbol;
+      decimal -= value;
     }
   }
 
-  return roman;
+  return result;
 }
 
 function utf8Encode(text) {
   const encoder = new TextEncoder();
   const encoded = encoder.encode(text);
-  return Array.from(encoded)
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join(" ");
+  return Array.from(encoded).map((byte) => byte.toString(16).padStart(2, "0")).join(" ");
 }
 
 function utf32Encode(text) {
-  const codePoints = Array.from(text).map((char) => char.codePointAt(0));
-  return codePoints
-    .map((cp) => cp.toString(16).padStart(8, "0"))
+  return Array.from(text)
+    .map((char) => char.codePointAt(0).toString(16).padStart(8, "0"))
     .join(" ");
-}
-function convert() {
-  const inputNumber = document.getElementById("input-number").value.trim();
-  const sourceBase = document.getElementById("source-base").value;
-  const targetBase = document.getElementById("target-base").value;
-
-  let result = "";
-
-  try {
-    if (sourceBase === "roman") {
-      const decimal = romanToDecimal(inputNumber);
-      result = convertFromDecimal(decimal, targetBase);
-    } else if (targetBase === "roman") {
-      const decimal = parseInt(inputNumber, sourceBase);
-      result = decimalToRoman(decimal);
-    } else if (targetBase === "ascii") {
-      const decimal = parseInt(inputNumber, sourceBase);
-      result = String.fromCharCode(decimal);
-    } else if (targetBase === "utf8") {
-      result = utf8Encode(inputNumber);
-    } else if (targetBase === "utf32") {
-      result = utf32Encode(inputNumber);
-    } else {
-      const decimal = parseInt(inputNumber, sourceBase);
-      result = decimal.toString(targetBase);
-    }
-  } catch (error) {
-    result = "Ungültige Eingabe";
-  }
-
-  document.getElementById("result").innerText = result;
 }
 
 function copyToClipboard() {
@@ -155,5 +133,3 @@ function copyToClipboard() {
     alert("Es gibt kein Ergebnis zum Kopieren.");
   }
 }
-
-// Weitere Funktionen wie romanToDecimal, decimalToRoman, utf8Encode und utf32Encode bleiben unverändert.
