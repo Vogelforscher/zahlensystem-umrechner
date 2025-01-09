@@ -9,7 +9,7 @@ function convert() {
     // Überprüfen auf ungültige Kombinationen
     if (
       (sourceBase === "ascii" && targetBase !== "utf8" && targetBase !== "utf32") ||
-      (targetBase === "ascii" && sourceBase !== "10") ||
+      (targetBase === "ascii" && sourceBase !== "10" && sourceBase !== "2") || // Dezimal oder Binär zu ASCII
       (sourceBase === "roman" && (targetBase === "ascii" || targetBase === "utf8" || targetBase === "utf32")) ||
       (targetBase === "roman" && (sourceBase === "ascii" || sourceBase === "utf8" || sourceBase === "utf32"))
     ) {
@@ -25,8 +25,14 @@ function convert() {
       const decimal = parseInt(inputNumber, sourceBase);
       result = decimalToRoman(decimal);
     } else if (targetBase === "ascii") {
-      // Dezimal zu ASCII
-      const decimal = parseInt(inputNumber, sourceBase);
+      // Binär oder Dezimal zu ASCII
+      let decimal;
+      if (sourceBase === "2") {
+        decimal = parseInt(inputNumber, 2); // Binär zu Dezimal
+      } else {
+        decimal = parseInt(inputNumber, 10); // Dezimal zu Dezimal
+      }
+
       if (isNaN(decimal) || decimal < 0 || decimal > 255) {
         throw new Error("ASCII-Werte müssen im Bereich von 0 bis 255 liegen.");
       }
@@ -131,5 +137,20 @@ function copyToClipboard() {
     );
   } else {
     alert("Es gibt kein Ergebnis zum Kopieren.");
+  }
+}
+
+function convertFromDecimal(decimal, base) {
+  switch (base) {
+    case "2":
+      return decimal.toString(2); // Binär
+    case "8":
+      return decimal.toString(8); // Oktal
+    case "10":
+      return decimal.toString(10); // Dezimal
+    case "16":
+      return decimal.toString(16); // Hexadezimal
+    default:
+      throw new Error("Ungültiges Ziel-Basis");
   }
 }
