@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Number System Converter</title>
+  <title>Zahlensystem-Umrechner</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Number System Converter</h1>
-  <form id="converter-form">
-    <input type="text" id="input-number" placeholder="Zahl eingeben" required>
-    <select id="source-base">
-      <option value="10">Dezimal</option>
-      <option value="2">Binär</option>
-      <option value="16">Hexadezimal</option>
-      <option value="8">Oktal</option>
-      <option value="roman">Römische Zahlen</option>
-      <option value="ascii">ASCII</option>
-      <option value="utf8">UTF-8</option>
-      <option value="utf32">UTF-32</option>
-    </select>
-    zu
-    <select id="target-base">
-      <option value="10">Dezimal</option>
-      <option value="2">Binär</option>
-      <option value="16">Hexadezimal</option>
-      <option value="8">Oktal</option>
-      <option value="roman">Römische Zahlen</option>
-      <option value="ascii">ASCII</option>
-      <option value="utf8">UTF-8</option>
-      <option value="utf32">UTF-32</option>
-    </select>
-    <br>
-    <button type="button" onclick="convert()">Umrechnen</button>
-  </form>
-  <h2>Ergebnis: <span id="result"></span></h2>
-  <button id="copy-button" onclick="copyToClipboard()">Ergebnis kopieren</button>
+  <div class="container">
+    <h1>Zahlensystem-Umrechner</h1>
+    <form id="converter-form">
+      <div class="input-container">
+        <input type="text" id="input-number" placeholder="Zahl eingeben" required>
+        <select id="source-base">
+          <option value="10">Dezimal</option>
+          <option value="2">Binär</option>
+          <option value="16">Hexadezimal</option>
+          <option value="8">Oktal</option>
+          <option value="roman">Römische Zahlen</option>
+          <option value="ascii">ASCII</option>
+          <option value="utf8">UTF-8</option>
+          <option value="utf32">UTF-32</option>
+        </select>
+        <span>zu</span>
+        <select id="target-base">
+          <option value="10">Dezimal</option>
+          <option value="2">Binär</option>
+          <option value="16">Hexadezimal</option>
+          <option value="8">Oktal</option>
+          <option value="roman">Römische Zahlen</option>
+          <option value="ascii">ASCII</option>
+          <option value="utf8">UTF-8</option>
+          <option value="utf32">UTF-32</option>
+        </select>
+      </div>
+      <div class="button-container">
+        <button type="button" onclick="convert()">Umrechnen</button>
+        <button type="button" onclick="copyToClipboard()">Kopieren</button>
+      </div>
+    </form>
+    <h2>Ergebnis: <span id="result"></span></h2>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
