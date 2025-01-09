@@ -49,6 +49,79 @@ function convert() {
   document.getElementById("result").innerText = result;
 }
 
+function romanToDecimal(roman) {
+  const romanNumerals = {
+    M: 1000,
+    D: 500,
+    C: 100,
+    L: 50,
+    X: 10,
+    V: 5,
+    I: 1,
+  };
+
+  let decimal = 0;
+  let prevValue = 0;
+
+  for (let char of roman.toUpperCase()) {
+    const value = romanNumerals[char];
+    if (!value) throw new Error("Ungültige römische Zahl.");
+    if (value > prevValue) {
+      decimal += value - 2 * prevValue;
+    } else {
+      decimal += value;
+    }
+    prevValue = value;
+  }
+
+  return decimal;
+}
+
+function decimalToRoman(decimal) {
+  if (decimal <= 0 || decimal > 3999) {
+    throw new Error("Römische Zahlen können nur Werte zwischen 1 und 3999 darstellen.");
+  }
+
+  const romanNumerals = [
+    { value: 1000, symbol: "M" },
+    { value: 900, symbol: "CM" },
+    { value: 500, symbol: "D" },
+    { value: 400, symbol: "CD" },
+    { value: 100, symbol: "C" },
+    { value: 90, symbol: "XC" },
+    { value: 50, symbol: "L" },
+    { value: 40, symbol: "XL" },
+    { value: 10, symbol: "X" },
+    { value: 9, symbol: "IX" },
+    { value: 5, symbol: "V" },
+    { value: 4, symbol: "IV" },
+    { value: 1, symbol: "I" },
+  ];
+
+  let result = "";
+
+  for (const { value, symbol } of romanNumerals) {
+    while (decimal >= value) {
+      result += symbol;
+      decimal -= value;
+    }
+  }
+
+  return result;
+}
+
+function utf8Encode(text) {
+  const encoder = new TextEncoder();
+  const encoded = encoder.encode(text);
+  return Array.from(encoded).map((byte) => byte.toString(16).padStart(2, "0")).join(" ");
+}
+
+function utf32Encode(text) {
+  return Array.from(text)
+    .map((char) => char.codePointAt(0).toString(16).padStart(8, "0"))
+    .join(" ");
+}
+
 function copyToClipboard() {
   const result = document.getElementById("result").innerText;
   if (result) {
@@ -60,5 +133,3 @@ function copyToClipboard() {
     alert("Es gibt kein Ergebnis zum Kopieren.");
   }
 }
-
-// Weitere Funktionen bleiben gleich (romanToDecimal, decimalToRoman, utf8Encode, utf32Encode).
