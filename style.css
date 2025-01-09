@@ -99,3 +99,14 @@ button {
 button:hover {
   background-color: #45a049;
 }
+#result {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.2rem;
+  color: #333;
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  white-space: pre-wrap;
+}
